@@ -1,6 +1,6 @@
 # Nova Status
 
-Updated: 2026-10-06
+Updated: 2026-10-09
 
 ## Source Imported
 
@@ -110,3 +110,13 @@ Updated: 2026-10-06
 - Browser verification: sign-in renders, sign-up mode toggles, and signed-out home redirects to `/auth`. No warning/error console entries were observed in this browser pass.
 - The user explicitly chose code and signed-out verification. Authenticated sign-in, live model responses, persistence, and attachment interpretation remain unverified end to end. Previously reported Google-provider configuration limitations have not been rechecked or changed.
 - GitHub publishing is pending: `origin` is `https://github.com/sydfahim/Nova-AI-Assistant.git`, but both Git fetch and the connected GitHub repository API report repository not found. No remote update has been made.
+
+## Vercel deployment repair (2026-10-09)
+
+- Vercel deployment `7vZw61ckGrdJmswAnsKDDvhcDPrF` failed during dependency installation because TanStack Start was affected by CVE-2026-102989. Upgraded `@tanstack/react-start` to 1.168.60, `@tanstack/react-router` to 1.170.41, and `@tanstack/router-plugin` to 1.168.42. The npm lockfile resolves patched `@tanstack/start-server-core` 1.169.39. Removed the obsolete Bun lockfile so it cannot reinstall the vulnerable dependency tree.
+- Adapted the root error component to the updated router's error props. Added an allowlisted build-time mapping from the Supabase integration's URL/publishable key to the Vite browser variables, with tests that reject service-role and secret keys. Explicit Vite variables retain precedence.
+- Excluded generated `.vercel` output from Git and ESLint. The lint process was otherwise scanning generated deployment artifacts.
+- Verified in `/private/tmp/nova-deploy-check` using a fresh dependency install, because iCloud-offloaded dependencies in Documents stall local tools: Vercel-targeted production build PASS, lint PASS (13 existing Fast Refresh warnings), typecheck PASS, and all 10 tests PASS. The deployment build generates `.vercel/output/config.json` and the server function. Public test configuration was used for the build; no live AI or authenticated database request was made.
+- Original Supabase project `lqsolzjqxfeqhfsfgork` remains INACTIVE. Resume was rejected because the account has reached its two-active-free-project limit. Vercel's Supabase integration currently points to a different project, `zdhocrkvycalwitamrxt`; choosing a database target and freeing a slot or migrating data requires the user's decision. No backup was restored and no other project was paused.
+- The downloaded SQL backup and its gzip copy match byte-for-byte. The storage ZIP passes validation and contains zero objects. Backup contents and credentials were not added to Git.
+- `OPENAI_API_KEY`, `NOVA_AI_PROVIDER`, and `NOVA_AI_MODEL` were absent from the inspected Vercel settings. Chat needs these server-side values and a working database. Production deployment and authenticated verification are pending.
